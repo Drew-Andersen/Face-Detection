@@ -1,0 +1,14 @@
+* {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+.nav-item {
+    font-size: 1.5rem;
+    text-decoration: none;
+    transition: color .15s ease-in;
+    opacity: 1;
+    transition: opacity .15s ease-in;
+    text-decoration: underline;
+    padding: 1rem;
+}

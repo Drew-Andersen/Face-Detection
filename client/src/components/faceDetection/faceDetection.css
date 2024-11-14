@@ -1,3 +1,16 @@
+.absolute {
+    position: absolute;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.ma {
+    margin: auto;
+}
+
 .bounding-box {
     position: absolute;
     box-shadow: 0 0 0 3px #149df2 inset;

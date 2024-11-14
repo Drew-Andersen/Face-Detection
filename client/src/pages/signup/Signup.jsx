@@ -63,7 +63,7 @@ const Signup = () => {
                         />
                     </div>
                     <div className="lh-copy mt-3 white">
-                        <Link to='/login' className="f6 link dim black db white pointer">Login</Link>
+                        <Link to='/login' className="Link f6 link dim black db pointer">Login</Link>
                     </div>
                 </div>
             </article>
