@@ -1,20 +1,50 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './signup.css';
 
-const Signup = () => {
-    // const handleInputChange = () => {
-    //     123
-    // }
+import { createUser } from '../../utils/API';
+import Auth from '../../utils/auth';
 
-    // const handleFormSubmit = () => {
-    //     123
-    // }
+const Signup = () => {
+    const [userFormData, setUserFormData] = useState({ name: '', email: '', password: '' });
+    const [errorMessage, setErrorMessage] = useState(''); // To show errors to the user
+    const navigate = useNavigate();
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setUserFormData({ ...userFormData, [name]: value });
+    };
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+
+        const form = e.currentTarget;
+        if (form.checkValidity() === false) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        try {
+            // Attempt to create the user
+            const { token, user } = await createUser(userFormData);
+            // If the user is created successfully, log them in
+            if(token){
+                Auth.login(token);
+                navigate('/home');
+            } else {
+                setErrorMessage('No token received, please try again.');
+            }
+            
+            setUserFormData({ name: '', email: '', password: '' });
+        } catch (err) {
+            // If an error occurs, display the error message
+            setErrorMessage(err.message || 'Something went wrong!');
+        }
+    };
 
     return (
         <div className='d-flex justify-content-center align-items-center mt-5 text-center'>
             <article className="article-signup">
-                {/* changed the form element to a div for better customization */}
                 <div className="border border-3 measure white">
                     <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                         <legend className="pt-2 ph0 mh0">Sign Up</legend>
@@ -24,9 +54,9 @@ const Signup = () => {
                                 className="form-input bg-transparent"
                                 type="text"
                                 name="name"
-                                // value={userFormData.name}
+                                value={userFormData.name}
                                 id="name"
-                            // onChange={handleInputChange}
+                                onChange={handleInputChange}
                             />
                         </div>
                         <div className="my-3">
@@ -35,9 +65,9 @@ const Signup = () => {
                                 className="form-input bg-transparent"
                                 type="email"
                                 name="email"
-                                // value={userFormData.email}
+                                value={userFormData.email}
                                 id="email"
-                                // onChange={handleInputChange}
+                                onChange={handleInputChange}
                                 required
                             />
                         </div>
@@ -47,19 +77,23 @@ const Signup = () => {
                                 className="form-input bg-transparent"
                                 type="password"
                                 name="password"
-                                // value={userFormData.password}
+                                value={userFormData.password}
                                 id="password"
-                                // onChange={handleInputChange}
+                                onChange={handleInputChange}
                                 required
                             />
                         </div>
                     </fieldset>
+
+                    {/* Show error message if there is one */}
+                    {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+
                     <div className="">
                         <input
                             className="signup-btn b px-3 py-2 f6 dib white"
                             type="submit"
                             value="Sign up"
-                        // onClick={handleFormSubmit}
+                            onClick={handleFormSubmit}
                         />
                     </div>
                     <div className="lh-copy mt-3 white">
@@ -68,7 +102,7 @@ const Signup = () => {
                 </div>
             </article>
         </div>
-    )
-}
+    );
+};
 
 export default Signup;

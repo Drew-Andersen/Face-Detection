@@ -11,4 +11,12 @@
     transition: opacity .15s ease-in;
     text-decoration: underline;
     padding: 1rem;
+    cursor: pointer;
+}
+
+.Link {
+  text-decoration: none;
+  text-decoration-style: none;
+  text-decoration-line: none;
+  color: white;
 }

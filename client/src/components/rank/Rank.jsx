@@ -3,13 +3,14 @@ import './rank.css';
 
 const Rank = () => {
     return(
-        <div>
-            <div className="white f3">
+        <div className="rank">
+            <div className="div1 f3">
                 {'{username}, your current rank is ...'}
             </div>
-            <div className="white f3">
+            <div className="div1 f3">
                 {'#{rank}'}
             </div>
+            <br />
         </div>
     )
 }

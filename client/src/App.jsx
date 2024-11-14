@@ -20,7 +20,7 @@ function App() {
   return (
     <>
       <div>
-        <Particles type='cobweb' params={particlesOptions} bg={true} color='#ffffff' /> 
+        <Particles className='Particles' type='cobweb' params={particlesOptions} bg={true} color='#ffffff' /> 
         <Header/>
           <Outlet/>
         <Footer className='footer' />
