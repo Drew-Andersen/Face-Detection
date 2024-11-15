@@ -1,19 +1,6 @@
-// import React from "react";
-// import Footer from '../footer/Footer';
-// import './faceDetection.css';
-
-// const FaceDetection = ({ imageURL, box }) => {
-//     return (
-//         <div className="center ma">
-//             <div className="absolute mt-2">
-//                 <img id="inputimage" src={imageURL} alt="Face detection image" width='500px' height='auto' />
-//                 <div className="bounding-box" style={{top: box.topRow, right: box.rightCol, bottom: box.bottomRow, left: box.leftCol}}></div>
-//             </div>
-//         </div>
-//     )
-// }
-
-// export default FaceDetection;
+import React from "react";
+import Footer from '../footer/Footer';
+import './faceDetection.css';
 
 const FaceDetection = ({ boxes, imageURL }) => {
     return (
