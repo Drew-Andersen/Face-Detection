@@ -34,7 +34,8 @@ class Home extends Component {
     fetchUserData = () => {
         const { token } = this.state;
 
-        fetch('http://localhost:3001/api/users/me', {
+        // http://localhost:3001/api/users/me
+        fetch('/api/users/me', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -149,7 +150,8 @@ class Home extends Component {
     incrementEntries = () => {
         const { token } = this.state;
         
-        fetch('http://localhost:3001/api/users/entries', {
+        // http://localhost:3001/api/users/entries
+        fetch('/api/users/entries', {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
