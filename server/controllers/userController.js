@@ -36,13 +36,13 @@ module.exports = {
             const foundUser = await User.findOne({
                 $or: [{ _id: user ? user._id : params.id }, { name: params.name }]
             });
-
+    
             // If no user found, return a 400 response
             if (!foundUser) {
                 return res.status(400).json({ message: 'Cannot find a user with that id or name!' });
             }
-
-            // Return the user data
+    
+            // Return the user data (should include name)
             res.json(foundUser);
         } catch (err) {
             console.error('Error fetching user:', err);
@@ -115,6 +115,38 @@ module.exports = {
         } catch (err) {
             console.error('Error deleting user:', err);
             res.status(500).json({ message: 'Error deleting user' });
+        }
+    },
+
+    // Update the entries
+    async putEntries(req, res) {
+        try {
+            // Find the user based on the ID from the JWT token
+            const user = await User.findById(req.user._id);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+    
+            // Log the current entries before incrementing
+            console.log('Current entries:', user.entries);  // returning undefined
+    
+            // Initialize entries if not present
+            user.entries = user.entries || 0;  // Ensure it's not null or undefined
+    
+            // Increment entries by 1
+            user.entries++;
+    
+            // Log after incrementing
+            console.log('Updated entries:', user.entries);  // Log after update
+    
+            // Save the updated user
+            await user.save();
+    
+            // Send back the updated user object
+            res.json({ entries: user.entries });
+        } catch (err) {
+            console.error('Error updating entries:', err);
+            res.status(500).json({ message: 'Failed to update entries' });
         }
     }
 };

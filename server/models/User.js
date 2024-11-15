@@ -20,8 +20,9 @@ const userSchema = new Schema({
         required: true,
         minlength: 5,
     },
-    entires: {
+    entries: {
         type: Number,
+        default: 0
     },
     joined: {
         type: Date,

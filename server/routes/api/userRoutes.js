@@ -4,7 +4,8 @@ const {
     getSingleUser,
     login,
     getUsers,
-    removeUser
+    removeUser,
+    putEntries,
 } = require('../../controllers/userController');
 
 // Import middleware for authentication
@@ -25,5 +26,7 @@ router.route('/:userId').delete(authMiddleware, removeUser);
 
 // GET /api/users/me - Get the logged-in user's data (protected route)
 router.route('/me').get(authMiddleware, getSingleUser);
+
+router.route('/entries').put(authMiddleware, putEntries);
 
 module.exports = router;

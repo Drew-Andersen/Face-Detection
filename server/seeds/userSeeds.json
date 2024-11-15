@@ -2,16 +2,19 @@
     {
         "name": "John",
         "email": "john@mail.com",
-        "password": "john123"
+        "password": "john123",
+        "entries": 0
     },
     {
         "name": "Sally",
         "email": "sally@mail.com",
-        "password": "sally123"
+        "password": "sally123",
+        "entries": 0
     },
     {
         "name": "Drew",
         "email": "Drew@mail.com",
-        "password": "drew123"
+        "password": "drew123",
+        "entries": 0
     }
 ]

@@ -11,8 +11,43 @@ class Home extends Component {
         this.state = {
             input: '',
             imageURL: '',
-            boxes: [], 
+            boxes: [],
+            user: {
+                id: '',
+                name: '',
+                email: '',
+                entries: 0,
+                joined: ''
+            },
+            token: '',
         }
+    }
+
+    componentDidMount() {
+        const token = localStorage.getItem('id_token');
+        console.log('Token in localStorage:', token)
+        if (token) {
+            this.setState({ token }, this.fetchUserData); 
+        }
+    }
+
+    fetchUserData = () => {
+        const { token } = this.state;
+
+        fetch('http://localhost:3001/api/users/me', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(user => {
+            console.log('Fetched user data:', user);
+            this.setState({ user });
+        })
+        .catch(err => {
+            console.log('Error fetching user data:', err);
+        });
     }
 
     onInputChange = (e) => {
@@ -24,17 +59,17 @@ class Home extends Component {
         const regions = data?.outputs[0]?.data?.regions;
         if (!regions || regions.length === 0) {
             console.log('No faces detected');
-            return []; 
+            return [];
         }
-        
+
         const image = document.getElementById('inputimage');
         const width = Number(image.width);
         const height = Number(image.height);
         console.log('width', width);
         console.log('height', height);
-    
+
         const boxes = [];
-    
+
         // Check if regions exist and are not empty
         if (regions && regions.length > 0) {
             // Using a for loop instead of map
@@ -46,7 +81,7 @@ class Home extends Component {
                     rightCol: width - (clarifaiFace.right_col * width),
                     bottomRow: height - (clarifaiFace.bottom_row * height),
                 };
-                boxes.push(box); 
+                boxes.push(box);
             }
         }
         return boxes;
@@ -55,7 +90,7 @@ class Home extends Component {
     displayFaceBox = (boxes) => {
         if (boxes.length === 0) {
             console.log('No faces detected');
-            this.setState({ boxes: [] }); 
+            this.setState({ boxes: [] });
         } else {
             console.log(boxes);
             this.setState({ boxes: boxes }); // Set the boxes to state
@@ -64,13 +99,13 @@ class Home extends Component {
 
     onButtonSubmit = () => {
         this.setState({ imageURL: this.state.input });
-    
+
         const returnClarifaiOptions = (imageURL) => {
             const PAT = '874fa60878c6469181ebfd21d779414d';
             const USER_ID = 'drewbearz';
             const APP_ID = 'face-detection-app';
             const IMAGE_URL = imageURL;
-    
+
             const raw = JSON.stringify({
                 "user_app_id": {
                     "user_id": USER_ID,
@@ -86,7 +121,7 @@ class Home extends Component {
                     }
                 ]
             });
-    
+
             const requestOptions = {
                 method: 'POST',
                 headers: {
@@ -95,27 +130,57 @@ class Home extends Component {
                 },
                 body: raw
             };
-    
+
             return requestOptions;
         };
-    
+
         fetch('https://cors-anywhere.herokuapp.com/https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiOptions(this.state.input))
             .then(response => response.json())
             .then(response => {
                 const boxes = this.calculateFaceLocation(response);
                 this.displayFaceBox(boxes);
+                this.incrementEntries();
             })
             .catch(error => {
                 console.log('error', error);
             });
     };
-    
+
+    incrementEntries = () => {
+        const { token } = this.state;
+        
+        fetch('http://localhost:3001/api/users/entries', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Updated entries from backend:', data);
+            if (data.entries !== undefined) {
+                this.setState(prevState => ({
+                    user: {
+                        ...prevState.user,
+                        entries: data.entries 
+                    }
+                }));
+            } else {
+                console.error('Entries field not found in the response:', data);
+            }
+        })
+        .catch(err => {
+            console.log('Error updating entries:', err);
+        });
+    };
+
     render() {
-        const { imageURL, boxes } = this.state;
+        const { imageURL, boxes, user } = this.state;
         return (
             <div className="home">
                 <Logo />
-                <Rank />
+                <Rank name={user.name} entries={user.entries} />
                 <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
                 <FaceDetection boxes={boxes} imageURL={imageURL} />
             </div>
