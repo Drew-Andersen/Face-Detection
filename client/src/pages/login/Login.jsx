@@ -9,27 +9,22 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
-    // Handle changes in form input fields
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUserFormData({ ...userFormData, [name]: value });
     };
 
-    // Handle form submission
     const handleFormSubmit = async (e) => {
         e.preventDefault();
     
-        // Check if the form data is valid
         if (!userFormData.email || !userFormData.password) {
             setErrorMessage('Please enter both email and password');
             return;
         }
     
         try {
-            // Call the login API
             const response = await loginUser(userFormData);
     
-            // Check if the response is valid and the response body is not empty
             if (!response.ok) {
                 const { message } = await response.json(); // Parse the error message from the API
                 setErrorMessage(message || 'Login failed, please try again');

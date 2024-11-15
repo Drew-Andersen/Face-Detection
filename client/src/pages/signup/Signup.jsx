@@ -7,7 +7,7 @@ import Auth from '../../utils/auth';
 
 const Signup = () => {
     const [userFormData, setUserFormData] = useState({ name: '', email: '', password: '' });
-    const [errorMessage, setErrorMessage] = useState(''); // To show errors to the user
+    const [errorMessage, setErrorMessage] = useState(''); 
     const navigate = useNavigate();
 
     const handleInputChange = (e) => {
@@ -25,7 +25,6 @@ const Signup = () => {
         }
 
         try {
-            // Attempt to create the user
             const { token, user } = await createUser(userFormData);
             // If the user is created successfully, log them in
             if(token){
