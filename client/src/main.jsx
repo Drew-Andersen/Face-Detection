@@ -21,11 +21,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        )
+        element: <Login />
       },
       {
         path: '/login',
@@ -35,7 +31,14 @@ const router = createBrowserRouter([
         path: '/signup',
         element: <Signup />
       },
-
+      {
+        path: '/home',
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        )
+      },
     ]
   }
 ])
