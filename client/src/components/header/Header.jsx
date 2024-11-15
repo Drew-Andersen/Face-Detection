@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import Nav from "../nav/Nav";
 // import Logo from '../logo/Logo';
-import './Header.css'; // Custom CSS for the header
+import './header.css'; // Custom CSS for the header
 
 class Header extends Component {
     constructor(){
