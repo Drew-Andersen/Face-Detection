@@ -121,10 +121,10 @@ npm run develop
 
 <!-- Screenshots -->
 
-<!-- ![Home page](client/public/imagees/Home.png)
-![Era page](client/public/imagees/Era.png)
-![Login page](client/public/imagees/Login.png)
-![Sign-up page](client/public/imagees/Sign-up.png) -->
+![Home page](client/public/images/home.png)
+![Era page](client/public/images/home2.png)
+![Login page](client/public/images/Login.png)
+![Sign-up page](client/public/images/Sign-up.png)
 
 <!-- ROADMAP -->
 
