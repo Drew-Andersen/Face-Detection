@@ -8,26 +8,6 @@ export const getMe = (token) => {
     });
 };
 
-// export const createUser = async (userData) => {
-//     try {
-//         const response = await fetch('/api/users', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(userData),
-//         });
-
-//         const data = await response.json();
-//         if (!response.ok){
-//             throw new Error("Signup failed, please try again.");
-//         }
-//         return data
-//     } catch(err){
-//         console.log(err);
-//     }
-// };
-
 export const createUser = async (userData) => {
     try {
         // http://localhost:3001/api/users
@@ -56,7 +36,8 @@ export const createUser = async (userData) => {
 
 export const loginUser = async (userData) => {
     try {
-        const response = await fetch('http://localhost:3001/api/users/login', {  // Correct the API URL
+        // http://localhost:3001/api/users/login
+        const response = await fetch('/api/users/login', {  // Correct the API URL
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
