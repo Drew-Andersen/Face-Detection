@@ -135,7 +135,8 @@ class Home extends Component {
             return requestOptions;
         };
 
-        fetch('https://cors-anywhere.herokuapp.com/https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiOptions(this.state.input))
+        // https://cors-anywhere.herokuapp.com/
+        fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiOptions(this.state.input))
             .then(response => response.json())
             .then(response => {
                 const boxes = this.calculateFaceLocation(response);
