@@ -22,8 +22,16 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Load />
+        element: localStorage.getItem('hasLoaded') ? (
+          <Navigate to="/home" />  // Redirect to /home after the first load
+        ) : (
+          <Load />  // Show the Load component only on first load
+        ),
       },
+      // {
+      //   index: true,
+      //   element: <Load />
+      // },
       {
         path: '/login',
         element: <Login />
