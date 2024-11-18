@@ -34,7 +34,7 @@ module.exports = {
         try {
             // Find the user by either their _id or name
             const foundUser = await User.findOne({
-                $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
+                $or: [{ _id: user ? user._id : params.id }, { name: params.name }],
             });
     
             if (!foundUser) {
