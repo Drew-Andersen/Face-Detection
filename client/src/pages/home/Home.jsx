@@ -41,12 +41,7 @@ class Home extends Component {
                 authorization: `Bearer ${token}`
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch user data.');
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(user => {
             console.log('Fetched user data:', user);
             this.setState({ user });
