@@ -27,15 +27,15 @@ class Home extends Component {
         const token = localStorage.getItem('id_token');
         console.log('Token in localStorage:', token)
         if (token) {
-            this.setState({ token }, this.fetchUserData); 
+            this.setState({ token }, this.fetchUserData);
         }
     }
 
-    fetchUserData = () => {  
+    fetchUserData = () => {
         const { token } = this.state;
         console.log('Token being sent:', token);
 
-        if(!token) {
+        if (!token) {
             console.log('No token found');
             return;
         }
@@ -44,17 +44,36 @@ class Home extends Component {
         fetch('/api/users/me', {
             method: 'GET',
             headers: {
-                authorization: `Bearer ${token}`
-            }
+                authorization: `Bearer ${this.state.token}`,  // Ensure token is prefixed with 'Bearer '
+            },
         })
-        .then(response => response.json())
-        .then(user => {
-            console.log('Fetched user data:', user);
-            this.setState({ user });
-        })
-        .catch(err => {
-            console.log('Error fetching user data:', err);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                return response.json();
+            })
+            .then(user => {
+                console.log('Fetched user data:', user);
+                this.setState({ user });
+            })
+            .catch(err => {
+                console.log('Error fetching user data:', err);
+            });
+        // fetch('/api/users/me', {
+        //     method: 'GET',
+        //     headers: {
+        //         authorization: `Bearer ${token}`
+        //     }
+        // })
+        // .then(response => response.json())
+        // .then(user => {
+        //     console.log('Fetched user data:', user);
+        //     this.setState({ user });
+        // })
+        // .catch(err => {
+        //     console.log('Error fetching user data:', err);
+        // });
     }
 
     onInputChange = (e) => {
@@ -155,7 +174,7 @@ class Home extends Component {
 
     onButtonSubmit = () => {
         this.setState({ imageURL: this.state.input });
-    
+
         fetch('/api/clarifai/face-detection', {
             method: 'POST',
             headers: {
@@ -164,20 +183,20 @@ class Home extends Component {
             },
             body: JSON.stringify({ imageURL: this.state.input })
         })
-        .then(response => response.json())
-        .then(response => {
-            const boxes = this.calculateFaceLocation(response);
-            this.displayFaceBox(boxes);
-            this.incrementEntries();
-        })
-        .catch(error => {
-            console.log('Error:', error);
-        });
+            .then(response => response.json())
+            .then(response => {
+                const boxes = this.calculateFaceLocation(response);
+                this.displayFaceBox(boxes);
+                this.incrementEntries();
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
     };
 
     incrementEntries = () => {
         const { token } = this.state;
-        
+
         // http://localhost:3001/api/users/entries
         fetch('/api/users/entries', {
             method: 'PUT',
@@ -186,23 +205,23 @@ class Home extends Component {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Updated entries from backend:', data);
-            if (data.entries !== undefined) {
-                this.setState(prevState => ({
-                    user: {
-                        ...prevState.user,
-                        entries: data.entries 
-                    }
-                }));
-            } else {
-                console.error('Entries field not found in the response:', data);
-            }
-        })
-        .catch(err => {
-            console.log('Error updating entries:', err);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log('Updated entries from backend:', data);
+                if (data.entries !== undefined) {
+                    this.setState(prevState => ({
+                        user: {
+                            ...prevState.user,
+                            entries: data.entries
+                        }
+                    }));
+                } else {
+                    console.error('Entries field not found in the response:', data);
+                }
+            })
+            .catch(err => {
+                console.log('Error updating entries:', err);
+            });
     };
 
     render() {
