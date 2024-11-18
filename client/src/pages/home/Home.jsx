@@ -98,53 +98,75 @@ class Home extends Component {
         }
     };
 
+    // onButtonSubmit = () => {
+    //     this.setState({ imageURL: this.state.input });
+
+    //     const returnClarifaiOptions = (imageURL) => {
+    //         const PAT = '874fa60878c6469181ebfd21d779414d';
+    //         const USER_ID = 'drewbearz';
+    //         const APP_ID = 'face-detection-app';
+    //         const IMAGE_URL = imageURL;
+
+    //         const raw = JSON.stringify({
+    //             "user_app_id": {
+    //                 "user_id": USER_ID,
+    //                 "app_id": APP_ID
+    //             },
+    //             "inputs": [
+    //                 {
+    //                     "data": {
+    //                         "image": {
+    //                             "url": IMAGE_URL
+    //                         }
+    //                     }
+    //                 }
+    //             ]
+    //         });
+
+    //         const requestOptions = {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Authorization': 'Key ' + PAT
+    //             },
+    //             body: raw
+    //         };
+
+    //         return requestOptions;
+    //     };
+
+    //     fetch('https://cors-anywhere.herokuapp.com/https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiOptions(this.state.input))
+    //         .then(response => response.json())
+    //         .then(response => {
+    //             const boxes = this.calculateFaceLocation(response);
+    //             this.displayFaceBox(boxes);
+    //             this.incrementEntries();
+    //         })
+    //         .catch(error => {
+    //             console.log('error', error);
+    //         });
+    // };
+
     onButtonSubmit = () => {
         this.setState({ imageURL: this.state.input });
-
-        const returnClarifaiOptions = (imageURL) => {
-            const PAT = '874fa60878c6469181ebfd21d779414d';
-            const USER_ID = 'drewbearz';
-            const APP_ID = 'face-detection-app';
-            const IMAGE_URL = imageURL;
-
-            const raw = JSON.stringify({
-                "user_app_id": {
-                    "user_id": USER_ID,
-                    "app_id": APP_ID
-                },
-                "inputs": [
-                    {
-                        "data": {
-                            "image": {
-                                "url": IMAGE_URL
-                            }
-                        }
-                    }
-                ]
-            });
-
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Key ' + PAT
-                },
-                body: raw
-            };
-
-            return requestOptions;
-        };
-
-        fetch('https://cors-anywhere.herokuapp.com/https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiOptions(this.state.input))
-            .then(response => response.json())
-            .then(response => {
-                const boxes = this.calculateFaceLocation(response);
-                this.displayFaceBox(boxes);
-                this.incrementEntries();
-            })
-            .catch(error => {
-                console.log('error', error);
-            });
+    
+        fetch('/api/clarifai/face-detection', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.state.token}`  // Optional, in case you need to authenticate this API call
+            },
+            body: JSON.stringify({ imageURL: this.state.input })
+        })
+        .then(response => response.json())
+        .then(response => {
+            const boxes = this.calculateFaceLocation(response);
+            this.displayFaceBox(boxes);
+            this.incrementEntries();
+        })
+        .catch(error => {
+            console.log('Error:', error);
+        });
     };
 
     incrementEntries = () => {
