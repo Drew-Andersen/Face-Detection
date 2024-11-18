@@ -30,17 +30,17 @@ module.exports = {
     },
 
     // Get a single user by either their id or their name
-    async getSingleUser(req, res) {
+    async getSingleUser({ user = null, params }, res) {
         try {
             // Find the user by either their _id or name
-            const foundUser = await User.findById(req.user._id)
+            const foundUser = await User.findOne({
+                $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
+            });
     
-            // If no user found, return a 400 response
             if (!foundUser) {
-                return res.status(400).json({ message: 'Cannot find a user with that id or name!' });
+                return res.status(400).json({ message: 'Cannot find a user with this id!' });
             }
     
-            // Return the user data (should include name)
             res.json(foundUser);
         } catch (err) {
             console.error('Error fetching user:', err);
