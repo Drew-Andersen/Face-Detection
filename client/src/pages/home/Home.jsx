@@ -112,6 +112,7 @@ class Home extends Component {
     onButtonSubmit = () => {
         this.setState({ imageURL: this.state.input });
     
+        // http://localhost:3001/api/clarifai/face-detection
         fetch('/api/clarifai/face-detection', {
             method: 'POST',
             headers: {
