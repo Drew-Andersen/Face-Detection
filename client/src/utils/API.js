@@ -1,11 +1,27 @@
 // route to get logged in user's info (needs the token)
-export const getMe = (token) => {
-    return fetch('/api/users/me', {
-        headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${token}`,
-        },
-    });
+export const getMe = async (token) => {
+    try {
+        const response = await fetch('/api/users/me', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        // Check if the response is okay (status 2xx)
+        if (!response.ok) {
+            // Handle error response
+            const errorData = await response.text();  // Get raw text in case it's an HTML error page
+            console.error('Error response from API:', errorData);  // Log the error data
+            throw new Error('Failed to fetch user data');
+        }
+
+        // Parse and return the JSON if the response is okay
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        throw error;  // Re-throw the error to be handled in the calling function
+    }
 };
 
 export const createUser = async (userData) => {
