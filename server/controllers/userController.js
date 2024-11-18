@@ -32,39 +32,21 @@ module.exports = {
     // Get a single user by either their id or their name
     async getSingleUser(req, res) {
         try {
-            // The user object is already attached to req.user by authMiddleware
-            const user = req.user;
-
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+            // Find the user by either their _id or name
+            const foundUser = await User.findById(req.user._id)
+    
+            // If no user found, return a 400 response
+            if (!foundUser) {
+                return res.status(400).json({ message: 'Cannot find a user with that id or name!' });
             }
-
-            // Return user data (excluding password for security)
-            res.json(user);
+    
+            // Return the user data (should include name)
+            res.json(foundUser);
         } catch (err) {
             console.error('Error fetching user:', err);
             res.status(500).json({ message: 'Error fetching user' });
         }
     },
-    // async getSingleUser({ user = null, params }, res) {
-    //     try {
-    //         // Find the user by either their _id or name
-    //         const foundUser = await User.findOne({
-    //             $or: [{ _id: user ? user._id : params.id }, { name: params.name }]
-    //         });
-
-    //         // If no user found, return a 400 response
-    //         if (!foundUser) {
-    //             return res.status(400).json({ message: 'Cannot find a user with that id or name!' });
-    //         }
-
-    //         // Return the user data (should include name)
-    //         res.json(foundUser);
-    //     } catch (err) {
-    //         console.error('Error fetching user:', err);
-    //         res.status(500).json({ message: 'Error fetching user' });
-    //     }
-    // },
 
     // Login a user, sign a token, and send it back to the client
     async login({ body }, res) {
@@ -142,22 +124,22 @@ module.exports = {
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
-
+    
             // Log the current entries before incrementing
             console.log('Current entries:', user.entries);  // returning undefined
-
+    
             // Initialize entries if not present
             user.entries = user.entries || 0;  // Ensure it's not null or undefined
-
+    
             // Increment entries by 1
             user.entries++;
-
+    
             // Log after incrementing
             console.log('Updated entries:', user.entries);  // Log after update
-
+    
             // Save the updated user
             await user.save();
-
+    
             // Send back the updated user object
             res.json({ entries: user.entries });
         } catch (err) {
