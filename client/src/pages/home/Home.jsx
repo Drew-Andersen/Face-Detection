@@ -31,8 +31,14 @@ class Home extends Component {
         }
     }
 
-    fetchUserData = () => {
+    fetchUserData = () => {  
         const { token } = this.state;
+        console.log('Token being sent:', token);
+
+        if(!token) {
+            console.log('No token found');
+            return;
+        }
 
         // http://localhost:3001/api/users/me
         fetch('/api/users/me', {
