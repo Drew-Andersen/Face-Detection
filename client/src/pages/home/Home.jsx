@@ -33,21 +33,26 @@ class Home extends Component {
 
     fetchUserData = () => {
         const { token } = this.state;
-
-        // http://localhost:3001/api/users/me
+    
         fetch('/api/users/me', {
             method: 'GET',
             headers: {
-                authorization: `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${token}`,
+            },
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data. Please check your authentication.');
+            }
+            return response.json();
+        })
         .then(user => {
             console.log('Fetched user data:', user);
             this.setState({ user });
         })
         .catch(err => {
-            console.log('Error fetching user data:', err);
+            console.error('Error fetching user data:', err);
+            // Optionally, handle logout logic here if token is invalid
         });
     }
 
