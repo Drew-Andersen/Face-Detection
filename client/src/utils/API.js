@@ -4,7 +4,7 @@ export const getMe = (token) => {
         headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${token}`,
-        },
+        },       
     });
 };
 

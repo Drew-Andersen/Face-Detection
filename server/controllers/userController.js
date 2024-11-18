@@ -32,18 +32,16 @@ module.exports = {
     // Get a single user by either their id or their name
     async getSingleUser({ user = null, params }, res) {
         try {
-            // Find the user by either their _id or name
-            const foundUser = await User.findOne({
-                $or: [{ _id: user ? user._id : params.id }, { name: params.name }]
-            });
-    
-            // If no user found, return a 400 response
-            if (!foundUser) {
-                return res.status(400).json({ message: 'Cannot find a user with that id or name!' });
+            // req.user is populated by the authMiddleware with the user based on the token
+            const user = await User.findById(req.user._id);  // Find the user by ID (from the token)
+
+            // If no user is found, send an error response
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
             }
-    
-            // Return the user data (should include name)
-            res.json(foundUser);
+
+            // Send back the user data (not including the password or other sensitive data)
+            res.json(user);
         } catch (err) {
             console.error('Error fetching user:', err);
             res.status(500).json({ message: 'Error fetching user' });
