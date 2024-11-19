@@ -1,5 +1,4 @@
 import React from "react";
-import Footer from '../footer/Footer';
 import './faceDetection.css';
 
 const FaceDetection = ({ boxes, imageURL }) => {
