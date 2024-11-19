@@ -10,8 +10,7 @@ const FaceDetection = ({ boxes, imageURL }) => {
                     id="inputimage"
                     src={imageURL}
                     alt="Face Detection"
-                    width="500px"
-                    height="auto"
+                    className="detection-img"
                     onLoad={() => console.log('Image loaded')} // Add this to confirm image loading
                 />
                 {boxes && boxes.length > 0 && boxes.map((b, index) => {
