@@ -169,7 +169,7 @@ class Home extends Component {
         return (
             <div className="home">
                 <Logo />
-                {/* <Rank name={user.name} entries={user.entries} /> */}
+                <Rank name={user.name} entries={user.entries} />
                 <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
                 <FaceDetection boxes={boxes} imageURL={imageURL} />
             </div>
