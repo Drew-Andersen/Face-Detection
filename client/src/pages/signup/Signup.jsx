@@ -42,7 +42,7 @@ const Signup = () => {
     };
 
     return (
-        <div className='d-flex justify-content-center align-items-center mt-5 text-center'>
+        <div className='d-flex justify-content-center align-items-center mt-5 text-center height100'>
             <article className="article-signup">
                 <div className="border border-3 measure white">
                     <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
