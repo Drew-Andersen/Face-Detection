@@ -10,6 +10,13 @@ const ImageLinkForm = ({ onInputChange, onButtonSubmit }) => {
             <div className="center">
                 <div className="center form">
                     <input type="text" className="form-input center text-black" placeholder="Input a URL here..." onChange={onInputChange} />
+                    {/* <input type="file" className="form-input center text-black" /> */}
+                    <button className="form-btn px-3 py-2 white" onClick={onButtonSubmit} >Detect</button>
+                </div>
+            </div>
+            <div className="center">
+            <div className="center form">
+                    <input type="file" className="form-input file center text-black" />
                     <button className="form-btn px-3 py-2 white" onClick={onButtonSubmit} >Detect</button>
                 </div>
             </div>
