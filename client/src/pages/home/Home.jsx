@@ -12,7 +12,6 @@ class Home extends Component {
             input: '',
             imageURL: '',
             boxes: [],
-            file: null, // Store the uploaded file
             user: {
                 id: '',
                 name: '',
@@ -26,6 +25,7 @@ class Home extends Component {
 
     componentDidMount() {
         const token = localStorage.getItem('id_token');
+        console.log('Token in localStorage:', token)
         if (token) {
             this.setState({ token }, this.fetchUserData); 
         }
@@ -33,81 +33,134 @@ class Home extends Component {
 
     fetchUserData = () => {  
         const { token } = this.state;
-        if (!token) {
+        console.log('Token being sent:', token);
+
+        if(!token) {
             console.log('No token found');
             return;
         }
 
+        // http://localhost:3001/api/users/me
         fetch('/api/users/me', {
             method: 'GET',
             headers: {
                 authorization: `Bearer ${token}`
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            return response.json();
+        })
         .then(user => {
+            console.log('Fetched user data:', user);
             this.setState({ user });
         })
         .catch(err => {
             console.log('Error fetching user data:', err);
         });
-    };
+    }
 
     onInputChange = (e) => {
+        console.log(e.target.value);
         this.setState({ input: e.target.value });
+    }
+
+    calculateFaceLocation = (data) => {
+        const regions = data?.outputs[0]?.data?.regions;
+        if (!regions || regions.length === 0) {
+            console.log('No faces detected');
+            return [];
+        }
+
+        const image = document.getElementById('inputimage');
+        const width = Number(image.width);
+        const height = Number(image.height);
+        console.log('width', width);
+        console.log('height', height);
+
+        const boxes = [];
+
+        // Check if regions exist and are not empty
+        if (regions && regions.length > 0) {
+            // Using a for loop instead of map
+            for (let i = 0; i < regions.length; i++) {
+                const clarifaiFace = regions[i].region_info.bounding_box;
+                const box = {
+                    leftCol: clarifaiFace.left_col * width,
+                    topRow: clarifaiFace.top_row * height,
+                    rightCol: width - (clarifaiFace.right_col * width),
+                    bottomRow: height - (clarifaiFace.bottom_row * height),
+                };
+                boxes.push(box);
+            }
+        }
+        return boxes;
     };
 
-    onFileChange = (e) => {
-        const file = e.target.files[0];
-        this.setState({ file });
-    };
-
-    onButtonSubmit = () => {
-        const { file, input, token } = this.state;
-
-        if (file) {
-            // Send the file to the server
-            const formData = new FormData();
-            formData.append('image', file);
-
-            fetch('/upload', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('File upload successful:', data);
-                // Process the file (e.g., call Clarifai API with the uploaded image URL)
-            })
-            .catch(err => {
-                console.log('Error uploading file:', err);
-            });
-        } else if (input) {
-            // Use the URL if no file is selected
-            fetch('/api/clarifai/face-detection', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ imageURL: input })
-            })
-            .then(response => response.json())
-            .then(response => {
-                const boxes = this.calculateFaceLocation(response);
-                this.displayFaceBox(boxes);
-                this.incrementEntries();
-            })
-            .catch(error => {
-                console.log('Error:', error);
-            });
+    displayFaceBox = (boxes) => {
+        if (boxes.length === 0) {
+            console.log('No faces detected');
+            this.setState({ boxes: [] });
+        } else {
+            console.log(boxes);
+            this.setState({ boxes: boxes }); 
         }
     };
 
-    // Add methods for face detection and updating user entries here...
+    onButtonSubmit = () => {
+        this.setState({ imageURL: this.state.input });
+    
+        // http://localhost:3001/api/clarifai/face-detection
+        fetch('/api/clarifai/face-detection', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.state.token}`
+            },
+            body: JSON.stringify({ imageURL: this.state.input })
+        })
+        .then(response => response.json())
+        .then(response => {
+            const boxes = this.calculateFaceLocation(response);
+            this.displayFaceBox(boxes);
+            this.incrementEntries();
+        })
+        .catch(error => {
+            console.log('Error:', error);
+        });
+    };
+
+    incrementEntries = () => {
+        const { token } = this.state;
+        
+        // http://localhost:3001/api/users/entries
+        fetch('/api/users/entries', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Updated entries from backend:', data);
+            if (data.entries !== undefined) {
+                this.setState(prevState => ({
+                    user: {
+                        ...prevState.user,
+                        entries: data.entries 
+                    }
+                }));
+            } else {
+                console.error('Entries field not found in the response:', data);
+            }
+        })
+        .catch(err => {
+            console.log('Error updating entries:', err);
+        });
+    };
 
     render() {
         const { imageURL, boxes, user } = this.state;
