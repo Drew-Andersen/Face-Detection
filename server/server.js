@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Clarifai API request route
-app.post('http://localhost:3001/api/clarifai/face-detection', async (req, res) => {
+app.post('/api/clarifai/face-detection', async (req, res) => {
     const { imageURL } = req.body;
 
     const PAT = '874fa60878c6469181ebfd21d779414d';
