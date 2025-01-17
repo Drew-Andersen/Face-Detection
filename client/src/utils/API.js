@@ -1,4 +1,5 @@
 // route to get logged in user's info (needs the token)
+// http://localhost:3001/api/users/me
 export const getMe = (token) => {
     return fetch('/api/users/me', {
         headers: {
