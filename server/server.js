@@ -4,35 +4,35 @@ const path = require('path');
 const db = require('./config/connection');
 const routes = require('./routes');
 const cors = require('cors');
-// const multer = require('multer');
+const multer = require('multer'); // Enable multer for file uploads
 
-// // Set up multer storage and file destination
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, 'uploads/'); // Set up upload directory 
-//     },
-//     filename: function (req, file, cb) {
-//         // Use the original file name or generate a unique one to avoid overwriting
-//         cb(null, Date.now() + path.extname(file.originalname));
-//     }
-// });
+// Set up multer storage and file destination
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Set the directory for uploads
+    },
+    filename: function (req, file, cb) {
+        // Create a unique filename for each uploaded file
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
 
-// const uploads = multer({
-//     storage: storage,
-//     limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB file size limit
-//     fileFilter: function (req, file, cb) {
-//         // Allow only image files (you can customize this further)
-//         const filetypes = /jpeg|jpg|png|gif/;
-//         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-//         const nmimetype = filetypes.test(file.mimetype);
+const uploads = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB file size limit
+    fileFilter: function (req, file, cb) {
+        // Allow only image files (you can customize this further)
+        const filetypes = /jpeg|jpg|png|gif/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
 
-//         if (mimetype && extname) {
-//             return cb(null, true);
-//         } else {
-//             cb(new Error('Only image files are allowed'));
-//         }
-//     }
-// })
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'));
+        }
+    }
+});
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -92,23 +92,23 @@ app.post('/api/clarifai/face-detection', async (req, res) => {
     }
 });
 
-// // Route for handling file uploads
-// app.post('/upload', uploads.single('image'), (req, res) => {
-//     if (!req.file) {
-//         return res.status(400).json({ message: 'No file uploaded' });
-//     }
+// Route for handling file uploads
+app.post('/upload', uploads.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
 
-//     // You can now access the uploaded file via req.file
-//     console.log('Uploaded file:', req.file);
+    // You can now access the uploaded file via req.file
+    console.log('Uploaded file:', req.file);
 
-//     res.json({
-//         message: 'File upload successful',
-//         file: req.file
-//     });
-// })
+    res.json({
+        message: 'File upload successful',
+        file: req.file
+    });
+});
 
 app.use(routes);
 
 db.once('open', () => {
     app.listen(PORT, () => console.log(`Now listening on localhost:${PORT}`));
-})
+});
